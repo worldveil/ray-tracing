@@ -1,0 +1,12 @@
+# image files
+*.ppm
+
+# object files
+*.o
+run
+
+# assembly
+*.asm
+
+# other junk
+.DS_Store
