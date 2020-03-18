@@ -26,7 +26,7 @@ make ppm_assembly  # if you want to see the assembly generated
 
 Here we have our first camera at the origin, and we "paint" a screen by iterating stepwise with two vectors, one for the x-component and the other for the y-component. 
 
-We linearly interpolate ("lerp") between blue & white. 
+We linearly interpolate ("lerp") between blue & white.
 
 ```shell
 make ray_background
