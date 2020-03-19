@@ -33,7 +33,7 @@ make ray_background
 ./ray_background/run > ./ray_background/image.ppm
 ```
 
-### 4) Hitting a Sphere
+### 5) Hitting a Sphere
 
 ```shell
 make hit_sphere
@@ -41,4 +41,11 @@ make hit_sphere
 ```
 
 ## 6) Surface Normals and Multiple Objects
+
+```shell
+make surface_normals; ./surface_normals/run > ./surface_normals/image.ppm
+```
+
+
+
 
