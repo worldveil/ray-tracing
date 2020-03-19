@@ -5,6 +5,7 @@ ray tracing
 * [Clang getting started](https://clang.llvm.org/get_started.html)
 * [Makefile reference](http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/)
 * [Journey from C code to executable](https://stackoverflow.com/a/1213207/)
+* [Nice online C++ shell](http://cpp.sh/)
 
 Remember:
 

@@ -1,6 +1,9 @@
 CC=clang++
 CFLAGS=-I ./lib
 
+scratch: scratch/scratch.cpp
+	$(CC) scratch/scratch.cpp -o scratch/run && ./scratch/run
+
 ppm: ppm/make_ppm.cpp
 	$(CC) ppm/make_ppm.cpp -o ppm/run
 
@@ -18,3 +21,6 @@ hit_sphere: hit_sphere/hit_sphere.cpp lib/ray.h lib/vec3.h
 
 surface_normals: surface_normals/render.cpp lib/ray.h lib/vec3.h
 	$(CC) surface_normals/render.cpp -o surface_normals/run $(CFLAGS)
+
+hittable_spheres: hittable_spheres/render.cpp lib/ray.h lib/vec3.h
+	$(CC) hittable_spheres/render.cpp -o hittable_spheres/run $(CFLAGS)
