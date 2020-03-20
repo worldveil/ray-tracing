@@ -7,7 +7,7 @@ ray tracing
 * [Journey from C code to executable](https://stackoverflow.com/a/1213207/)
 * [Nice online C++ shell](http://cpp.sh/)
 
-C++ Concepts you'll need to understand the code:
+### C++ Concepts you'll need to understand the code:
 
 * [Initialization lists](https://www.cprogramming.com/tutorial/initialization-lists-c++.html): way to initialize instance variables without coding a constructor as explicitly. Mostly syntactic sugar. 
 * [You can't allocate an array of abstract class objects](https://stackoverflow.com/questions/60764923/c-allocating-memory-for-list-of-abstract-class-objects): you need an array of pointers. This is the only way polymorphism can work since otherwise C++ has no idea how much space to allocate for each entry in the array (each subclass might have different memory requirements)!
@@ -15,10 +15,11 @@ C++ Concepts you'll need to understand the code:
 * Pointers vs References...of course
 * Virtual functions and OO in C++
 
-Remember:
+## Remember:
 
 * `(x, y)`
 * For PPM: `(width, height)`
+* Add `-g gdb` in compiler arguments so that GDB symbols can be loaded from a binary for debugging purposes
 
 ## Steps
 
@@ -64,6 +65,18 @@ make hittable_spheres; ./hittable_spheres/run > ./hittable_spheres/image.ppm
 ### 8) Antialiasing
 
 ```shell
+make antialiasing; antialiasing/run > antialiasing/image.ppm
+```
+
+### 9) Diffuse Materials
+
+```shell
+```
+
+### 10) Metals
+
+```shell
+make metal; metal/run > metal/image.ppm
 ```
 
 

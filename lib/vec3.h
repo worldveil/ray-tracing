@@ -1,6 +1,7 @@
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
+#include "rand.h"
 
 #ifndef VEC3H
 #define VEC3H

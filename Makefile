@@ -1,5 +1,11 @@
 CC=clang++
-CFLAGS=-I ./lib
+CFLAGS=-I ./lib -ggdb
+
+diffusion: diffusion/render.cpp lib/ray.h lib/vec3.h lib/hittable.h lib/sphere.h lib/rand.h lib/camera.h
+	$(CC) diffusion/render.cpp -o diffusion/run $(CFLAGS)
+
+metal: metal/render.cpp lib/ray.h lib/vec3.h lib/hittable.h lib/sphere.h lib/rand.h lib/camera.h lib/material.h
+	$(CC) metal/render.cpp -o metal/run $(CFLAGS)
 
 scratch: scratch/scratch.cpp
 	$(CC) scratch/scratch.cpp -o scratch/run && ./scratch/run
@@ -22,5 +28,9 @@ hit_sphere: hit_sphere/hit_sphere.cpp lib/ray.h lib/vec3.h
 surface_normals: surface_normals/render.cpp lib/ray.h lib/vec3.h
 	$(CC) surface_normals/render.cpp -o surface_normals/run $(CFLAGS)
 
-hittable_spheres: hittable_spheres/render.cpp lib/ray.h lib/vec3.h
+hittable_spheres: hittable_spheres/render.cpp lib/ray.h lib/vec3.h lib/hittable.h lib/sphere.h
 	$(CC) hittable_spheres/render.cpp -o hittable_spheres/run $(CFLAGS)
+
+antialiasing: antialiasing/render.cpp lib/ray.h lib/vec3.h lib/hittable.h lib/sphere.h lib/rand.h lib/camera.h
+	$(CC) antialiasing/render.cpp -o antialiasing/run $(CFLAGS)
+
