@@ -10,7 +10,7 @@ static vec3 white(1.0, 1.0, 1.0);
 static vec3 blue(0.5, 0.7, 1.0);
 static vec3 red(1., 0., 0.);
 
-// circle variables 
+// circle variables
 static vec3 circleCenter(0., 0., -1);
 static float circleRadius = 0.5;
 
