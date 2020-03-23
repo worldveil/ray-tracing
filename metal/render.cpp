@@ -44,9 +44,9 @@ vec3 color(const ray& r, hittable *world, int depth) {
 }
 
 int main() {
-    int width = 200;
-    int height = 100;
-    int numAntialiasingSamples = 100;
+    int width = 800;
+    int height = 600;
+    int numAntialiasingSamples = 50;
 
     // header for PPM file
     std::cout << "P3\n" << width << " " << height << "\n255\n";
@@ -67,11 +67,16 @@ int main() {
     hittable *list[4];
     list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3)));
     list[1] = new sphere(vec3(0,-100.5,-1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
-    list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0.3));
+    list[2] = new sphere(vec3(1,0,-1), 0.5, new metal(vec3(1, 1, 1), 0.0));
     list[3] = new sphere(vec3(-1,0,-1), 0.5, new metal(vec3(0.8, 0.8, 0.8), 3));
     hittable *world = new hittable_list(list,4);
 
-    camera cam;
+    // set up camera
+    float aspect = float(width) / float(height);
+    vec3 up = vec3(0, 1, 0);
+    vec3 lookFrom(-1, 1, 1);
+    vec3 lookAt(0, 0, -1);
+    camera cam(lookFrom, lookAt, up, 90, aspect);
 
     for (int j = height; j >= 0; j--) {
         for (int i = 0; i < width; i++) {
