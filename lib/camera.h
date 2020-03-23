@@ -1,13 +1,22 @@
 #ifndef CAMERAH
 #define CAMERAH
 
+#include "rand.h"
 #include "ray.h"
+
+vec3 randomInUnitDisk() {
+    vec3 p;
+    do {
+        p = 2.0*vec3(random_double(),random_double(),0) - vec3(1,1,0);
+    } while (dot(p,p) >= 1.0);
+    return p;
+}
 
 class camera {
     public:
-        camera(vec3 lookfrom, vec3 lookat, vec3 vup, float vfov, float aspect) {
-            // vfov is top to bottom in degrees
-            vec3 u, v, w;
+        camera(vec3 lookfrom, vec3 lookat, vec3 vup, float vfov, float aspect,
+               float aperture, float focus_dist) {
+            lens_radius = aperture / 2;
             float theta = vfov*M_PI/180;
             float half_height = tan(theta/2);
             float half_width = aspect * half_height;
@@ -15,19 +24,27 @@ class camera {
             w = unitVector(lookfrom - lookat);
             u = unitVector(cross(vup, w));
             v = cross(w, u);
-            lower_left_corner = origin - half_width*u - half_height*v - w;
-            horizontal = 2*half_width*u;
-            vertical = 2*half_height*v;
+            lower_left_corner = origin
+                              - half_width * focus_dist * u
+                              - half_height * focus_dist * v
+                              - focus_dist * w;
+            horizontal = 2*half_width*focus_dist*u;
+            vertical = 2*half_height*focus_dist*v;
         }
 
         ray get_ray(float s, float t) {
-            return ray(origin,
-                       lower_left_corner + s*horizontal + t*vertical - origin);
+            vec3 rd = lens_radius * randomInUnitDisk(); // pick random direction inside radius
+            vec3 offset = u * rd.x() + v * rd.y(); // pick random point on len's surface (no z component!)
+            return ray(origin + offset,
+                       lower_left_corner + s*horizontal + t*vertical
+                           - origin - offset);
         }
 
         vec3 origin;
         vec3 lower_left_corner;
         vec3 horizontal;
         vec3 vertical;
+        vec3 u, v, w;
+        float lens_radius;
 };
 #endif
