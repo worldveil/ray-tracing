@@ -41,6 +41,7 @@ vec3 color(const ray& r, hittable *world, int depth) {
       float t = unitDirection.y() / 2. + 0.5;
     //   return (1. - t) * white + t * blue;
       return (1. - t) * white + t * red;
+    //   return (1. - t) * red + t * white;
     }
 }
 
@@ -56,8 +57,14 @@ hittable *random_scene() {
                         0.2,
                         b + 0.9 * random_double());
 
-            // prevent from intersecting with main sphere!
-            if ((center - vec3(0, 1, 0)).length() <= 1.05) {
+            // prevent from intersecting with main spheres!
+            if ((center - vec3(0, 1, 0)).length() <= 1.25) {
+                continue;
+            }
+            if ((center - vec3(-4, 1, 0)).length() <= 1.25) {
+                continue;
+            }
+            if ((center - vec3(4, 1, 0)).length() <= 1.25) {
                 continue;
             }
             
@@ -116,12 +123,12 @@ int main() {
 
     // set up camera
     vec3 up = vec3(0, 1, 0);
-    vec3 lookFrom(3, 1.3, 2);
+    vec3 lookFrom(5, 1.3, 1.4);
     vec3 lookAt(0, 1, 0);
     float aspect = float(width) / float(height);
     float distToFocusAt = (lookFrom - lookAt).length();
     float aperture = 0.;
-    float fieldOfViewDegrees = 60;
+    float fieldOfViewDegrees = 45;
 
     camera cam(lookFrom, lookAt, up, fieldOfViewDegrees, aspect, aperture, distToFocusAt);
 
