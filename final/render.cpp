@@ -99,9 +99,9 @@ hittable *random_scene() {
 }
 
 int main() {
-    int width = 300;
-    int height = 200;
-    int numAntialiasingSamples = 35;
+    int width = 1200;
+    int height = 900;
+    int numAntialiasingSamples = 100;
 
     // header for PPM file
     std::cout << "P3\n" << width << " " << height << "\n255\n";
@@ -123,7 +123,7 @@ int main() {
 
     // set up camera
     vec3 up = vec3(0, 1, 0);
-    vec3 lookFrom(5, 1.3, 1.4);
+    vec3 lookFrom(7.8, 1.5, 1.95);
     vec3 lookAt(0, 1, 0);
     float aspect = float(width) / float(height);
     float distToFocusAt = (lookFrom - lookAt).length();

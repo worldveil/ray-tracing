@@ -1,8 +1,9 @@
 ray tracing
 ===
 
-<img src="/img/matte_sphere.png" alt="Diffusion"
-	title="" width="400">
+<img src="/img/red_balls.png" alt="" title="" width="800">
+
+<img src="/img/matte_sphere.png" alt="" title="" width="800">
 
 * [Ray tracing in one weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
 * [Clang getting started](https://clang.llvm.org/get_started.html)
