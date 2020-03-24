@@ -136,6 +136,9 @@ int main() {
     int every = int(totalPixels / 10.);
     int completedPixels = 0;
 
+    std::cout << "image allocation" << std::endl;
+    vec3 image[height][width];
+
     for (int j = height; j >= 0; j--) {
         for (int i = 0; i < width; i++) {
 

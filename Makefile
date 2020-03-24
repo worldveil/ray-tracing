@@ -10,6 +10,9 @@ BASIC_UTILS=lib/ray.h lib/vec3.h
 ADVANCED_UTILS=lib/hittable.h lib/hittable_list.h lib/sphere.h lib/rand.h
 
 # rules
+parallel: parallel/go.cpp $(BASIC_UTILS) lib/image.h
+	$(CC) parallel/go.cpp -o parallel/run $(CFLAGS)
+
 final: final/render.cpp $(BASIC_UTILS) $(ADVANCED_UTILS) lib/camera.h
 	$(CC) final/render.cpp -o final/run $(CFLAGS)
 
