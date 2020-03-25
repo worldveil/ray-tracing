@@ -1,9 +1,20 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+
 #include "ray.h"
 #include "vec3.h"
 #include "hittable_list.h"
 #include "sphere.h"
 #include "rand.h"
 #include "camera.h"
+#include "image.h"
+
+// timing imports
+using std::milli;
+using std::chrono::duration;
+using std::chrono::duration_cast;
+using std::chrono::high_resolution_clock;
 
 // colors
 static vec3 white(1.0, 1.0, 1.0);
@@ -98,13 +109,16 @@ hittable *random_scene() {
     return new hittable_list(list, i);
 }
 
-int main() {
-    int width = 1200;
-    int height = 900;
-    int numAntialiasingSamples = 100;
+float printStats(const char *const tag, high_resolution_clock::time_point start, high_resolution_clock::time_point end, bool output) {
+    float ms = duration_cast<duration<double, milli> >(end - start).count();
+    if (output) printf("%s: %f ms\n", tag, ms);
+    return ms;
+}
 
-    // header for PPM file
-    std::cout << "P3\n" << width << " " << height << "\n255\n";
+int main() {
+    int width = 300; //1200;
+    int height = 100; //900;
+    int numAntialiasingSamples = 1; //100;
 
     /*
       hittable objects in the scene.
@@ -129,15 +143,19 @@ int main() {
     float distToFocusAt = (lookFrom - lookAt).length();
     float aperture = 0.;
     float fieldOfViewDegrees = 45;
-
     camera cam(lookFrom, lookAt, up, fieldOfViewDegrees, aspect, aperture, distToFocusAt);
 
+    // for status updates, have some stats about the image
     int totalPixels = width * height;
     int every = int(totalPixels / 10.);
     int completedPixels = 0;
+    std::cout.precision(3);
 
-    std::cout << "image allocation" << std::endl;
-    vec3 image[height][width];
+    // allocate image
+    Image img(height, width);
+
+    // start rendering time
+    const high_resolution_clock::time_point startRenderTime = high_resolution_clock::now();
 
     for (int j = height; j >= 0; j--) {
         for (int i = 0; i < width; i++) {
@@ -161,14 +179,59 @@ int main() {
             int ir = int(gamma_corrected[0] * 255.99);
             int ig = int(gamma_corrected[1] * 255.99);
             int ib = int(gamma_corrected[2] * 255.99);
-            std::cout << ir << " " << ig << " " << ib << "\n";
+
+            // store our pixel in our image object
+            vec3 pixel(ir, ig, ib);
+            img.setPixel(pixel, i, j);
+            // std::cout << ir << " " << ig << " " << ib << "\n";
 
             // progress reports
             completedPixels++;
-            float percentCompleted = completedPixels / float(totalPixels) * 100;
             if (completedPixels % every == 0) {
-                std::cerr << "Completed " << percentCompleted << " percent of pixels..." << std::endl;
+                const high_resolution_clock::time_point progressRenderTime = high_resolution_clock::now();
+                float renderingMs = printStats("Rendering status", startRenderTime, progressRenderTime, false);
+                float msPerPixel = renderingMs / completedPixels;
+                float percentCompleted = completedPixels / float(totalPixels) * 100;
+                percentCompleted = percentCompleted > 100 ? 100 : percentCompleted;
+                float secondsTaken = completedPixels * msPerPixel / 1000.;
+                float secondsLeftEta = (totalPixels - completedPixels) * msPerPixel / 1000.;
+                float secondsTotalEst = secondsTaken + secondsLeftEta;
+
+                // report periodically to user
+                std::cout << "[" << percentCompleted << "\% complete]" \
+                          << "\tTime taken: " << secondsTaken \
+                          << "s \tRender ETA: " << secondsLeftEta \
+                          << "s (" << (secondsLeftEta / 60.) << " min) " \
+                          << " \tTotal time estimate: " << secondsTotalEst \
+                          << "s (" << (secondsTotalEst / 60.) << " min) " \
+                          << " \tPer pixel: " << msPerPixel \
+                          << "ms" \
+                          << std::endl;
             }
         }
     }
+
+    // report time back to user
+    const high_resolution_clock::time_point endRenderTime = high_resolution_clock::now();
+    float renderingMs = printStats("\nRendering took", startRenderTime, endRenderTime, true);
+    float perPixel = renderingMs / totalPixels;
+    std::cout << "Per pixel render ms (" << totalPixels << "): " << perPixel << " ms" << std::endl;
+
+    // then write to disk
+    std::ofstream f;
+    f.open ("test.ppm");
+
+    // header for PPM file
+    f << "P3\n" << width << " " << height << "\n255\n";
+
+    // write pixels
+    for (int j = height; j >= 0; j--) {
+        for (int i = 0; i < width; i++) {
+            vec3 pixel = img.getPixel(i, j);
+            f << pixel.r() << " " << pixel.g() << " " << pixel.b() << "\n";
+        }
+    }
+
+    // close file
+    f.close();
 }

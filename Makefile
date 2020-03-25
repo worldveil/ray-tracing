@@ -13,7 +13,7 @@ ADVANCED_UTILS=lib/hittable.h lib/hittable_list.h lib/sphere.h lib/rand.h
 parallel: parallel/go.cpp $(BASIC_UTILS) lib/image.h
 	$(CC) parallel/go.cpp -o parallel/run $(CFLAGS)
 
-final: final/render.cpp $(BASIC_UTILS) $(ADVANCED_UTILS) lib/camera.h
+final: final/render.cpp $(BASIC_UTILS) $(ADVANCED_UTILS) lib/camera.h lib/image.h
 	$(CC) final/render.cpp -o final/run $(CFLAGS)
 
 diffusion: diffusion/render.cpp $(BASIC_UTILS) $(ADVANCED_UTILS) lib/camera.h

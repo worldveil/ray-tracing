@@ -12,6 +12,8 @@ ray tracing
     * [Ultimate source for Makefiles](https://www.gnu.org/software/make/manual/make.html)
 * [Journey from C code to executable](https://stackoverflow.com/a/1213207/)
 * [Nice online C++ shell](http://cpp.sh/)
+* [Ray tracing resources - GOOD](http://www.realtimerendering.com/raytracing.html#books)
+* [Really cool course from EPFL](https://wjakob.github.io/nori/)
 
 ### C++ Concepts you'll need to understand the code:
 
