@@ -65,6 +65,7 @@
         "deque": "cpp",
         "future": "cpp",
         "queue": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "unordered_set": "cpp"
     }
 }
