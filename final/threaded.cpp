@@ -1,6 +1,10 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
+#include <thread>
+#include <algorithm>
+#include <random>
 
 #include "ray.h"
 #include "vec3.h"
@@ -21,15 +25,24 @@ static vec3 white(1.0, 1.0, 1.0);
 static vec3 blue(0.5, 0.7, 1.0);
 static vec3 red(153./255., 0., 0.);
 
-// circle variables 
+// circle variables
 static vec3 circleCenter(0., 0., -1);
 static float circleRadius = 0.5;
 
-// depth
 static const int MAX_DEPTH = 25;
 static const int HEIGHT = 600;
 static const int WIDTH = 800;
 static const int NUM_SAMPLES = 25;
+
+static const unsigned NUM_THREADS = std::max(std::thread::hardware_concurrency() - 1, (unsigned)1);
+
+
+struct TracedPixel {
+    public:
+        TracedPixel(int row, int col) : i(row), j(col) {}
+        int i, j;
+        vec3* pixel;
+};
 
 struct RayTracingConfig {
     int height, width, max_depth, num_samples;
@@ -63,6 +76,46 @@ vec3 color(const ray& r, hittable *world, int depth) {
       return (1. - t) * white + t * red;
     //   return (1. - t) * red + t * white;
     }
+}
+
+/**
+ * Traces a single pixel
+ **/
+vec3* trace(int i, int j, RayTracingConfig& config) {
+    vec3 c(0, 0, 0);
+
+    // decide our color with `config.num_samples` random rays
+    for (int s = 0; s < config.num_samples; ++s) {  // pre-increment doesn't need variable on stack!
+        float xPercent = float(i + random_double()) / float(config.width);
+        float yPercent = float(j + random_double()) / float(config.height);
+        ray r = config.cam->get_ray(xPercent, yPercent);
+        c += color(r, config.world, 0); // depth = 0
+    }
+    c /= float(config.num_samples);
+    vec3 gamma_corrected(sqrt(c[0]), sqrt(c[1]), sqrt(c[2]));
+
+    // make our color
+    int ir = int(gamma_corrected[0] * 255.99);
+    int ig = int(gamma_corrected[1] * 255.99);
+    int ib = int(gamma_corrected[2] * 255.99);
+    return new vec3(ir, ig, ib);
+}
+
+/**
+ * Batch of pixels to trace within a single thread
+ * 
+ * We use a lambda to set our Image object directly from threads. Each thread has a 
+ * non-overlapping set of pixels to compute, so no thread coorination is necessary.
+ **/
+void tracePixelBatch(int start, int end, std::vector<TracedPixel>& jobs, RayTracingConfig& config, Image& img) {
+    std::for_each(
+        jobs.begin() + start,
+        jobs.begin() + end,
+        [&](TracedPixel pixel) {
+            vec3* c = trace(pixel.i, pixel.j, config);
+            img.setPixel(*c, pixel.i, pixel.j);
+        }
+    );
 }
 
 hittable *random_scene() {
@@ -125,6 +178,9 @@ float printStats(const char *const tag, high_resolution_clock::time_point start,
 }
 
 int main() {
+    std::cout << "Rendering with " << NUM_THREADS << " threads..." << std::endl;
+
+    // create our configuration struct
     RayTracingConfig config;
     config.height = HEIGHT;
     config.width = WIDTH;
@@ -133,6 +189,7 @@ int main() {
 
     /*
       hittable objects in the scene.
+
       Note!
       we have to have this array of abstract (hittable) type as array of pointers because if we declare an
       array of abstract type, c++ tries to allocate memory for that object based on default values. however,
@@ -141,8 +198,7 @@ int main() {
       but that's not what c++ is about. Thus, we have to have an array of pointers. The memory allocation
       is delegated to some other operation, at some other time.
     */
-    hittable *world = random_scene();
-    config.world = world;
+    config.world = random_scene();
 
     // set up camera
     vec3 up = vec3(0, 1, 0);
@@ -164,61 +220,37 @@ int main() {
     // allocate image
     Image img(config.height, config.width);
 
+    // create pixel tracing jobs
+    std::vector<TracedPixel> jobs;
+    for (int j = config.height; j >= 0; j--) {
+        for (int i = 0; i < config.width; i++) {
+            TracedPixel p(i, j);
+            jobs.push_back(p);
+        }
+    }
+
+    // shuffle for better parallelism since some regions of image are more costly than others
+    // auto rng = std::default_random_engine{};
+    // std::shuffle(std::begin(jobs), std::end(jobs), rng);
+
     // start rendering time
     const high_resolution_clock::time_point startRenderTime = high_resolution_clock::now();
 
-    for (int j = config.height; j >= 0; j--) {
-        for (int i = 0; i < config.width; i++) {
+    // create list of thread pointers
+    std::vector<std::thread *> threads;
 
-            // decide our pixel
-            float xPercent = float(i) / float(config.width);
-            float yPercent = float(j) / float(config.height);
+    // spin off threads
+    int itemsPerThread = int(totalPixels / NUM_THREADS);
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        int start = i * itemsPerThread;
+        int end = (i == NUM_THREADS - 1) ? totalPixels - 1 : start + itemsPerThread;
+        std::thread* th = new std::thread(tracePixelBatch, start, end, std::ref(jobs), std::ref(config), std::ref(img));
+        threads.push_back(th);
+    }
 
-            // decide our color with `numAntialiasingSamples` random rays
-            vec3 c(0, 0, 0);
-            for (int s = 0; s < config.num_samples; s++) {
-                float xPercent = float(i + random_double()) / float(config.width);
-                float yPercent = float(j + random_double()) / float(config.height);
-                ray r = cam.get_ray(xPercent, yPercent);
-                c += color(r, world, 0); // depth = 0
-            }
-            c /= float(config.num_samples);
-            vec3 gamma_corrected(sqrt(c[0]), sqrt(c[1]), sqrt(c[2]));
-
-            // make our color
-            int ir = int(gamma_corrected[0] * 255.99);
-            int ig = int(gamma_corrected[1] * 255.99);
-            int ib = int(gamma_corrected[2] * 255.99);
-
-            // store our pixel in our image object
-            vec3 pixel(ir, ig, ib);
-            img.setPixel(pixel, i, j);
-            // std::cout << ir << " " << ig << " " << ib << "\n";
-
-            // progress reports
-            completedPixels++;
-            if (completedPixels % every == 0) {
-                const high_resolution_clock::time_point progressRenderTime = high_resolution_clock::now();
-                float renderingMs = printStats("Rendering status", startRenderTime, progressRenderTime, false);
-                float msPerPixel = renderingMs / completedPixels;
-                float percentCompleted = completedPixels / float(totalPixels) * 100;
-                percentCompleted = percentCompleted > 100 ? 100 : percentCompleted;
-                float secondsTaken = completedPixels * msPerPixel / 1000.;
-                float secondsLeftEta = (totalPixels - completedPixels) * msPerPixel / 1000.;
-                float secondsTotalEst = secondsTaken + secondsLeftEta;
-
-                // report periodically to user
-                std::cout << "[" << percentCompleted << "\% complete]" \
-                          << "\tTime taken: " << secondsTaken \
-                          << "s \tRender ETA: " << secondsLeftEta \
-                          << "s (" << (secondsLeftEta / 60.) << " min) " \
-                          << " \tTotal time estimate: " << secondsTotalEst \
-                          << "s (" << (secondsTotalEst / 60.) << " min) " \
-                          << " \tPer pixel: " << msPerPixel \
-                          << "ms" \
-                          << std::endl;
-            }
-        }
+    // join threads
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        threads[i]->join();
     }
 
     // report time back to user
@@ -229,12 +261,12 @@ int main() {
 
     // then write to disk
     std::ofstream f;
-    f.open ("test.ppm");
+    f.open ("test-threading.ppm");
 
     // header for PPM file
     f << "P3\n" << config.width << " " << config.height << "\n255\n";
 
-    // write pixels
+    // write pixels to disk in correct PPM format order
     for (int j = config.height; j >= 0; j--) {
         for (int i = 0; i < config.width; i++) {
             vec3 pixel = img.getPixel(i, j);
