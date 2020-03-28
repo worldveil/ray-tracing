@@ -97,28 +97,17 @@ image.save('output.png')
 
 ## Running
 
-Set `render.cpp`:
+For the scene rendered with:
 
-```c++
-int main() {
-    int width = 1200;
-    int height = 900;
-    int numAntialiasingSamples = 100;
-    
-    // ...
-    
-    // set up camera
-    vec3 up = vec3(0, 1, 0);
-    vec3 lookFrom(7.8, 1.5, 1.95);
-    vec3 lookAt(0, 1, 0);
-    float aspect = float(width) / float(height);
-    float distToFocusAt = (lookFrom - lookAt).length();
-    float aperture = 0.;
-    float fieldOfViewDegrees = 45;
+* height=800
+* width=1200
+* 100 antialiasing samples
+* maximum bounce depth of 40 ray bounces
+* save to filename `scene.ppm`
+* estimate runtime before rendering with 0.01 (1%) of pixels
 
-    // ...
-```
+Simply run:
 
 ```shell
-make final; ./final/run > ./final/scene_name_here.ppm
+make && ./tracer -h 800 -w 1200 -o test.ppm -s 100 -d 40 -o scene.ppm -e 0.01
 ```

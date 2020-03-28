@@ -10,7 +10,7 @@ LIBS=$(wildcard lib/*.h)
 
 # rules
 final: final/threaded.cpp $(LIBS)
-	$(CC) -std=c++11 final/threaded.cpp -o final/threaded $(CFLAGS)
+	$(CC) -std=c++11 final/threaded.cpp -o tracer $(CFLAGS)
 
 arguments: arguments/go.cpp lib/args.hpp
 	$(CC) -std=c++11 arguments/go.cpp -o arguments/run $(CFLAGS)

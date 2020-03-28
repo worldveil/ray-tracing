@@ -26,6 +26,7 @@ namespace tracing {
         camera* cam;
         hittable* world;
         std::string savepath;
+        float estimate;
     };
 
     vec3 color(const ray& r, RayTracingConfig& config, int depth) {
