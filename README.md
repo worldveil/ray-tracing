@@ -5,6 +5,33 @@ ray tracing
 
 <img src="/img/matte_sphere.png" alt="" title="" width="800">
 
+## Running
+
+For the scene rendered with:
+
+* height=800
+* width=1200
+* 100 antialiasing samples
+* maximum bounce depth of 40 ray bounces
+* save to filename `scene.ppm`
+* estimate runtime before rendering with 0.01 (1%) of pixels
+
+Simply run:
+
+```shell
+make && ./tracer -h 800 -w 1200 -o test.ppm -s 100 -d 40 -o scene.ppm -e 0.01
+```
+
+On my machine, this takes about 20 minutes. Crazy you say? Well...
+
+```
+(800*1200 pixels) * 40 bounces possible * 100 antialiasing samples * ~50 spheres ~= 200 billion ray collision checks / calcuations!
+```
+
+For this reason, optimizing ray tracers is pretty important. Probably the next step for code like this (beyond actually allowing for triangles!) would be some time of quadtree-like intersection method, AKA a [Bounding Volume Hierarchy](https://en.wikipedia.org/wiki/Bounding_volume_hierarchy), which would cut down the number of intersections by some log factor. Still, this is a monumental task once we get to larger image sizes and number of objects.  
+
+## Resources
+
 * [Ray tracing in one weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
 * [Clang getting started](https://clang.llvm.org/get_started.html)
 * Makefiles
@@ -94,28 +121,3 @@ for x in widthPixels
 # save image!
 image.save('output.png')
 ```
-
-## Running
-
-For the scene rendered with:
-
-* height=800
-* width=1200
-* 100 antialiasing samples
-* maximum bounce depth of 40 ray bounces
-* save to filename `scene.ppm`
-* estimate runtime before rendering with 0.01 (1%) of pixels
-
-Simply run:
-
-```shell
-make && ./tracer -h 800 -w 1200 -o test.ppm -s 100 -d 40 -o scene.ppm -e 0.01
-```
-
-On my machine, this takes about 20 minutes. Crazy you say? Well...
-
-```
-(800*1200 pixels) * 40 bounces possible * 100 antialiasing samples * ~50 spheres ~= 200 billion ray collision checks / calcuations!
-```
-
-For this reason, optimizing ray tracers is pretty important. Probably the next step for code like this (beyond actually allowing for triangles!) would be some time of quadtree-like intersection method, AKA a [Bounding Volume Hierarchy](https://en.wikipedia.org/wiki/Bounding_volume_hierarchy), which would cut down the number of intersections by some log factor. Still, this is a monumental task once we get to larger image sizes and number of objects.  
