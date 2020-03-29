@@ -41,9 +41,6 @@ brew install --HEAD https://raw.githubusercontent.com/LouisBrunner/valgrind-maco
 then run with:
 
 ```shell
-$ valgrind --tool=memcheck --leak-check=yes ./tracer -h 200 -w 300 -o test.ppm -s 20 -d 20 -o scene.ppm -e 0.01
-
-# faster
 $ valgrind \
     --leak-check=full \
     --show-leak-kinds=all \
@@ -53,7 +50,7 @@ $ valgrind \
     ./tracer -h 10 -w 20 -o test.ppm -s 10 -d 10 -o scene.ppm -e 0.01
 ```
 
-It's worth noting that Valgrind actually serializes threads so they just execute one after the other. Valgrind in general is 50x slower as well. So this multithreaded ray tracer will be really, really slow in Valgrind. That's why I have the image so small in the example shell command.
+It's worth noting that Valgrind actually serializes (orders) thread execution so they just execute one after the other. Valgrind in general is up to 50x slower as well, since it's monitoring every memory allocation. So this multithreaded ray tracer will be really, really slow in Valgrind. That's why I have the image so small in the example shell command.
 
 If the C++ gods smile favorably on you, you'll see something like:
 
