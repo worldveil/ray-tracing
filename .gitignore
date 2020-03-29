@@ -12,3 +12,4 @@ run
 .DS_Store
 *Info.plist
 *.dSYM
+tracer

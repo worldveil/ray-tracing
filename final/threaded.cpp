@@ -200,8 +200,9 @@ int main(int argc, char** argv) {
     // write pixels to disk in correct PPM format order
     for (int j = config.height - 1; j >= 0; j--) {
         for (int i = 0; i < config.width; i++) {
-            vec3 pixel = img.getPixel(i, j);
+            vec3& pixel = img.getPixel(i, j);
             f << pixel.r() << " " << pixel.g() << " " << pixel.b() << "\n";
+            delete &pixel;
             // std::cout << pixel.r() << " " << pixel.g() << " " << pixel.b() << "\n";
         }
     }

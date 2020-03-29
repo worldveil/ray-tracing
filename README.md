@@ -41,7 +41,10 @@ brew install --HEAD https://raw.githubusercontent.com/LouisBrunner/valgrind-maco
 then run with:
 
 ```shell
-$ valgrind ./tracer -h 800 -w 1200 -o test.ppm -s 100 -d 40 -o scene.ppm -e 0.01
+$ valgrind --tool=memcheck --leak-check=yes ./tracer -h 200 -w 300 -o test.ppm -s 20 -d 20 -o scene.ppm -e 0.01
+
+# faster
+$ valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -- ./tracer -h 100 -w 200 -o test.ppm -s 10 -d 10 -o scene.ppm -e 0.01
 ```
 
 ## Resources
