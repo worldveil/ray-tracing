@@ -141,8 +141,8 @@ int main(int argc, char** argv) {
 
         for (int i = 0; i < estimatePixels; ++i) {
             tracing::TracedPixel* job = &jobs.at(i);
-            vec3* c = trace(job->i, job->j, config);
-            img.setPixel(*c, job->i, job->j);
+            vec3 c = trace(job->i, job->j, config);
+            img.setPixel(c, job->i, job->j);
         }
     
         const high_resolution_clock::time_point endEstimateTime = high_resolution_clock::now();

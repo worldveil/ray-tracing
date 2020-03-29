@@ -60,7 +60,7 @@ namespace tracing {
     /**
      * Traces a single pixel
      **/
-    vec3* trace(int i, int j, RayTracingConfig& config) {
+    vec3 trace(int i, int j, RayTracingConfig& config) {
         vec3 c(0, 0, 0);
 
         // decide our color with `config.num_samples` random rays
@@ -77,7 +77,7 @@ namespace tracing {
         int ir = int(gamma_corrected[0] * 255.99);
         int ig = int(gamma_corrected[1] * 255.99);
         int ib = int(gamma_corrected[2] * 255.99);
-        return new vec3(ir, ig, ib);
+        return vec3(ir, ig, ib);
     }
 
     /**
@@ -91,8 +91,8 @@ namespace tracing {
             jobs.begin() + start,
             jobs.begin() + end,
             [&](TracedPixel pixel) {
-                vec3* c = trace(pixel.i, pixel.j, config);
-                img.setPixel(*c, pixel.i, pixel.j);
+                vec3 c = trace(pixel.i, pixel.j, config);
+                img.setPixel(c, pixel.i, pixel.j);
             }
         );
     }

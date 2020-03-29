@@ -8,7 +8,8 @@ class Image {
             pixels = new vec3[height * width];
         }
         ~Image() {
-            delete pixels;
+            // must delete an "new" heap-allocated array with this syntax!
+            delete []pixels;
         }
 
         vec3& getPixel(int i, int j);

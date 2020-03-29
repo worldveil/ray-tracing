@@ -44,7 +44,25 @@ then run with:
 $ valgrind --tool=memcheck --leak-check=yes ./tracer -h 200 -w 300 -o test.ppm -s 20 -d 20 -o scene.ppm -e 0.01
 
 # faster
-$ valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -- ./tracer -h 100 -w 200 -o test.ppm -s 10 -d 10 -o scene.ppm -e 0.01
+$ valgrind \
+    --leak-check=full \
+    --show-leak-kinds=all \
+    --track-origins=yes \
+    --progress-interval=5 \
+    -- \
+    ./tracer -h 10 -w 20 -o test.ppm -s 10 -d 10 -o scene.ppm -e 0.01
+```
+
+It's worth noting that Valgrind actually serializes threads so they just execute one after the other. Valgrind in general is 50x slower as well. So this multithreaded ray tracer will be really, really slow in Valgrind. That's why I have the image so small in the example shell command.
+
+If the C++ gods smile favorably on you, you'll see something like:
+
+```
+==55007== HEAP SUMMARY:
+==55007==     in use at exit: 0 bytes in 0 blocks
+==55007==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==55007== 
+==55007== All heap blocks were freed -- no leaks are possible
 ```
 
 ## Resources
