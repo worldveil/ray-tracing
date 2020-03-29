@@ -19,7 +19,7 @@ For the scene rendered with:
 Simply run:
 
 ```shell
-make && ./tracer -h 800 -w 1200 -o test.ppm -s 100 -d 40 -o scene.ppm -e 0.01
+make production && ./tracer -h 800 -w 1200 -s 100 -d 40 -o scene.ppm -e 0.01
 ```
 
 On my machine, this takes about 20 minutes. Crazy you say? Well...
@@ -28,7 +28,9 @@ On my machine, this takes about 20 minutes. Crazy you say? Well...
 (800*1200 pixels) * 40 bounces possible * 100 antialiasing samples * ~50 spheres ~= 200 billion ray collision checks / calcuations!
 ```
 
-For this reason, optimizing ray tracers is pretty important. Probably the next step for code like this (beyond actually allowing for triangles!) would be some time of quadtree-like intersection method, AKA a [Bounding Volume Hierarchy](https://en.wikipedia.org/wiki/Bounding_volume_hierarchy), which would cut down the number of intersections by some log factor. Still, this is a monumental task once we get to larger image sizes and number of objects.  
+For this reason, optimizing ray tracers is pretty important. Probably the next step for code like this (beyond actually allowing for triangles!) would be some time of quadtree-like intersection method, AKA a [Bounding Volume Hierarchy](https://en.wikipedia.org/wiki/Bounding_volume_hierarchy), which would cut down the number of intersections by some log factor. Still, this is a monumental task once we get to larger image sizes and number of objects.
+
+Note that the `make production` compilation uses `-O3`, and this makes the program run 8-10x faster (!).
 
 ## Valgrind
 
@@ -41,6 +43,7 @@ brew install --HEAD https://raw.githubusercontent.com/LouisBrunner/valgrind-maco
 then run with:
 
 ```shell
+$ make development
 $ valgrind \
     --leak-check=full \
     --show-leak-kinds=all \
