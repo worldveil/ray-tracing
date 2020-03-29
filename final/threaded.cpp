@@ -184,6 +184,7 @@ int main(int argc, char** argv) {
     // join threads
     for (int i = 0; i < NUM_THREADS; ++i) {
         threads[i]->join();
+        delete threads[i];
     }
 
     // report time back to user
@@ -202,10 +203,12 @@ int main(int argc, char** argv) {
         for (int i = 0; i < config.width; i++) {
             vec3& pixel = img.getPixel(i, j);
             f << pixel.r() << " " << pixel.g() << " " << pixel.b() << "\n";
-            delete &pixel;
+            // delete &pixel;
             // std::cout << pixel.r() << " " << pixel.g() << " " << pixel.b() << "\n";
         }
     }
+
+    delete config.world;
 
     // close file
     f.close();

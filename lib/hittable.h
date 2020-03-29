@@ -16,6 +16,11 @@ class hittable  {
     public:
         virtual bool hit(
             const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
+        virtual ~hittable() = 0;
 };
+
+// weird gotcha: we HAVE to declare this for a virtual base class! otherwise we get
+//     ld: symbol(s) not found for architecture x86_64
+hittable::~hittable() { }
 
 #endif

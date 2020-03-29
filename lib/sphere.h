@@ -7,6 +7,9 @@
 class sphere: public hittable  {
     public:
         sphere() {}
+        ~sphere() {
+            delete mat_ptr;
+        }
         sphere(vec3 cen, float r) : center(cen), radius(r)  {}; // initializes center and radius variables
         sphere(vec3 cen, float r, material *m): center(cen), radius(r), mat_ptr(m)  {};
         virtual bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;

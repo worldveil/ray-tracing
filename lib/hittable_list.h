@@ -6,6 +6,11 @@
 class hittable_list: public hittable {
     public:
         hittable_list() {}
+        ~hittable_list() {
+            for (int i = 0; i < list_size; i++) {
+                delete list[i];
+            }
+        }
         hittable_list(hittable **l, int n) {list = l; list_size = n; }
         virtual bool hit(
             const ray& r, float tmin, float tmax, hit_record& rec) const;
