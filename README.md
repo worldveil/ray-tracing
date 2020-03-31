@@ -78,7 +78,7 @@ If the C++ gods smile favorably on you, you'll see something like:
 ## Resources
 
 * [Ray tracing in one weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
-* [Clang getting started](https://clang.llvm.org/get_started.html)
+* [Clang docs](https://clang.llvm.org/get_started.html)
 * Makefiles
     * [Makefile reference](http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/)
     * [Ultimate source for Makefiles](https://www.gnu.org/software/make/manual/make.html)
