@@ -158,3 +158,13 @@ for x in widthPixels
 # save image!
 image.save('output.png')
 ```
+
+## TODO
+
+If I were to continue this:
+
+* Add intersections for triangles, and some way to incorporate them into polygons & 3D volumes
+* Better time esimation that isn't hardcoded for my machine / 8 cores
+* BVH for increased performance
+* Explicit light sources
+* Converting RGB to spectrum for even more efficiency
