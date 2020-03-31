@@ -1,9 +1,19 @@
-ray tracing
+Ray Tracer
 ===
 
 <img src="/img/red_balls.png" alt="" title="" width="800">
 
 <img src="/img/matte_sphere.png" alt="" title="" width="800">
+
+## About
+
+This is a ray tracer for spheres only in C++. It features a variable position, lens focusable camera. Also three different materials with parameterized color, refraction, and reflection. 
+
+It's based on the "Ray Tracer In One Weekend" blog post I found online, but I have adapted it and coded it myself so I could understand what's going on. I choose to keep most of the library code in headers as inline functions, both to keep it to fewer files and for performance reasons.
+
+I've also parallelized it with a multithreaded execution model, added time estimates for rendering hi-res scenes, parameterized with command line flag parsing, and optimized memory management with Valgrind.
+
+It's certainly a toy ray tracer, but a fun one.
 
 ## Running
 
@@ -22,7 +32,7 @@ Simply run:
 make production && ./tracer -h 800 -w 1200 -s 100 -d 40 -o scene.ppm -e 0.01
 ```
 
-On my machine, this takes about 20 minutes. Crazy you say? Well...
+On my machine, this takes about 3 minutes. Crazy you say? Well...
 
 ```
 (800*1200 pixels) * 40 bounces possible * 100 antialiasing samples * ~50 spheres ~= 200 billion ray collision checks / calcuations!
@@ -76,14 +86,6 @@ If the C++ gods smile favorably on you, you'll see something like:
 * [Nice online C++ shell](http://cpp.sh/)
 * [Ray tracing resources - GOOD](http://www.realtimerendering.com/raytracing.html#books)
 * [Really cool course from EPFL](https://wjakob.github.io/nori/)
-
-### C++ Concepts you'll need to understand the code:
-
-* [Initialization lists](https://www.cprogramming.com/tutorial/initialization-lists-c++.html): way to initialize instance variables without coding a constructor as explicitly. Mostly syntactic sugar. 
-* [You can't allocate an array of abstract class objects](https://stackoverflow.com/questions/60764923/c-allocating-memory-for-list-of-abstract-class-objects): you need an array of pointers. This is the only way polymorphism can work since otherwise C++ has no idea how much space to allocate for each entry in the array (each subclass might have different memory requirements)!
-* Makefiles and header-only inline functions
-* Pointers vs References...of course
-* Virtual functions and OO in C++
 
 ## Remember:
 
