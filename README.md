@@ -26,10 +26,11 @@ For the scene rendered with:
 * save to filename `scene.ppm`
 * estimate runtime before rendering with 0.01 (1%) of pixels
 
-Simply run:
+Ensure you have CMake installed. Then simply run:
 
 ```shell
-make production && ./tracer -h 800 -w 1200 -s 100 -d 40 -o scene.ppm -e 0.01
+sh run_build.sh
+./build/tracer -h 800 -w 1200 -s 100 -d 40 -o scene.ppm -e 0.01
 ```
 
 On my machine, this takes about 3 minutes. Crazy you say? Well...

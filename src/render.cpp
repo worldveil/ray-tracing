@@ -113,8 +113,6 @@ int main(int argc, char** argv) {
 
     // for status updates, have some stats about the image
     int totalPixels = config.width * config.height;
-    int every = int(totalPixels / 10.);
-    int completedPixels = 0;
     std::cout.precision(3);
 
     // allocate image
@@ -122,8 +120,8 @@ int main(int argc, char** argv) {
 
     // create pixel tracing jobs
     std::vector<tracing::TracedPixel> jobs;
-    for (int j = config.height - 1; j >= 0; j--) {
-        for (int i = 0; i < config.width; i++) {
+    for (unsigned int j = config.height - 1; j >= 0; j--) {
+        for (unsigned int i = 0; i < config.width; i++) {
             tracing::TracedPixel p(i, j);
             jobs.push_back(p);
         }
@@ -157,7 +155,6 @@ int main(int argc, char** argv) {
         float msPerPixel = renderingMs / estimatePixels / threadingFactor;
         float secondsTaken = estimatePixels * msPerPixel / 1000.;
         float secondsLeftEta = (totalPixels - estimatePixels) * msPerPixel / 1000.;
-        float secondsTotalEst = secondsTaken + secondsLeftEta;
 
         std::cout << "[Estimation complete]" \
                     << "\tTime taken: " << secondsTaken \
@@ -174,7 +171,7 @@ int main(int argc, char** argv) {
 
     // spin off threads
     int itemsPerThread = int(totalPixels / NUM_THREADS);
-    for (int i = 0; i < NUM_THREADS; ++i) {
+    for (unsigned int i = 0; i < NUM_THREADS; ++i) {
         int start = i * itemsPerThread;
         int end = (i == NUM_THREADS - 1) ? totalPixels - 1 : start + itemsPerThread;
         std::thread* th = new std::thread(tracing::tracePixelBatch, start, end, std::ref(jobs), std::ref(config), std::ref(img));
@@ -182,7 +179,7 @@ int main(int argc, char** argv) {
     }
 
     // join threads
-    for (int i = 0; i < NUM_THREADS; ++i) {
+    for (unsigned int i = 0; i < NUM_THREADS; ++i) {
         threads[i]->join();
         delete threads[i];
     }
@@ -199,8 +196,8 @@ int main(int argc, char** argv) {
     f << "P3\n" << config.width << " " << config.height << "\n255\n"; // header for PPM file
 
     // write pixels to disk in correct PPM format order
-    for (int j = config.height - 1; j >= 0; j--) {
-        for (int i = 0; i < config.width; i++) {
+    for (unsigned int j = config.height - 1; j >= 0; j--) {
+        for (unsigned int i = 0; i < config.width; i++) {
             vec3& pixel = img.getPixel(i, j);
             f << pixel.r() << " " << pixel.g() << " " << pixel.b() << "\n";
             // delete &pixel;

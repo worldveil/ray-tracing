@@ -22,14 +22,14 @@ namespace tracing {
     };
 
     struct RayTracingConfig {
-        int height, width, max_depth, num_samples;
+        unsigned int height, width, max_depth, num_samples;
         camera* cam;
         hittable* world;
         std::string savepath;
         float estimate;
     };
 
-    vec3 color(const ray& r, RayTracingConfig& config, int depth) {
+    vec3 color(const ray& r, RayTracingConfig& config, unsigned int depth) {
         hit_record rec;
 
         // if it's a valid (positive) time (in front of camera), then display a gradient
@@ -64,7 +64,7 @@ namespace tracing {
         vec3 c(0, 0, 0);
 
         // decide our color with `config.num_samples` random rays
-        for (int s = 0; s < config.num_samples; ++s) {  // pre-increment doesn't need variable on stack!
+        for (unsigned int s = 0; s < config.num_samples; ++s) {  // pre-increment doesn't need variable on stack!
             float xPercent = float(i + random_double()) / float(config.width);
             float yPercent = float(j + random_double()) / float(config.height);
             ray r = config.cam->get_ray(xPercent, yPercent);
