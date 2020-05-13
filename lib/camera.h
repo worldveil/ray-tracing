@@ -35,7 +35,7 @@ class camera {
             vertical = 2*half_height*focus_dist*v;
         }
 
-        ray get_ray(float s, float t) {
+        ray get_ray(float s, float t) const {
             vec3 rd = lens_radius * randomInUnitDisk(); // pick random direction inside radius
             vec3 offset = u * rd.x() + v * rd.y(); // pick random point on len's surface (no z component!)
             return ray(origin + offset,

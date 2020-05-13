@@ -4,35 +4,31 @@
 
 class Image {
     public:
-        Image(int h, int w) : height(h), width(w) {
-            pixels = new vec3[height * width];
-        }
-        ~Image() {
-            // must delete an "new" heap-allocated array with this syntax!
-            delete []pixels;
-        }
+        Image(int h, int w) : pixels(h * w), height(h), width(w) {}
 
-        vec3& getPixel(int i, int j);
-        void setPixel(vec3& p, int i, int j);
-        void writeToFile(std::string filepath);
+        const vec3& getPixel(int i, int j) const;
+        void setPixel(const vec3& p, int i, int j);
+        bool writeToFile(std::string filepath) const;
 
-        vec3 *pixels;
+        std::vector<vec3> pixels;
         int height; 
         int width;
 };
 
-inline vec3& Image::getPixel(int i, int j) {
+inline const vec3& Image::getPixel(int i, int j) const {
     return pixels[height * i + j];
 }
 
-inline void Image::setPixel(vec3& p, int i, int j) {
+inline void Image::setPixel(const vec3& p, int i, int j) {
     pixels[height * i + j] = p;
 }
 
-inline void Image::writeToFile(std::string filepath) {
+inline bool Image::writeToFile(std::string filepath) const {
     // open up file to write
-    std::ofstream f;
-    f.open(filepath);
+    std::ofstream f(filepath);
+    if (!f.is_open()) {
+        return false;
+    }
 
     // header for PPM file
     f << "P3\n" << width << " " << height << "\n255\n";
@@ -40,11 +36,12 @@ inline void Image::writeToFile(std::string filepath) {
     // write pixels
     for (int j = height; j >= 0; j--) {
         for (int i = 0; i < width; i++) {
-            vec3 pixel = getPixel(i, j);
+            const vec3& pixel = getPixel(i, j);
             f << pixel.r() << " " << pixel.g() << " " << pixel.b() << "\n";
         }
     }
 
     // close file
     f.close();
+    return true;
 }

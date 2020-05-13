@@ -198,7 +198,7 @@ int main(int argc, char** argv) {
     // write pixels to disk in correct PPM format order
     for (unsigned int j = config.height - 1; j >= 0; j--) {
         for (unsigned int i = 0; i < config.width; i++) {
-            vec3& pixel = img.getPixel(i, j);
+            const vec3& pixel = img.getPixel(i, j);
             f << pixel.r() << " " << pixel.g() << " " << pixel.b() << "\n";
         }
     }
