@@ -3,7 +3,6 @@
 
 # object files
 *.o
-run
 
 # assembly
 *.asm
@@ -13,3 +12,6 @@ run
 *Info.plist
 *.dSYM
 tracer
+
+# build directory
+/build/*

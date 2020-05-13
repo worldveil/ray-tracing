@@ -4,6 +4,9 @@
 #include "rand.h"
 #include "ray.h"
 
+#define _USE_MATH_DEFINES  // for MSVC, for M_PI
+#include <math.h>
+
 vec3 randomInUnitDisk() {
     vec3 p;
     do {
