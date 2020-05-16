@@ -1,0 +1,14 @@
+---
+Language: Cpp
+ColumnLimit: '120'
+IndentWidth: '4'
+PointerAlignment: Left
+UseTab: Never
+
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+EscapedNewlineAlignmentStyle: ENAS_Left
+AlignOperands: OAS_Align
+AllowAllConstructorInitializersOnNextLine: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: true
+BinPackArguments: true
