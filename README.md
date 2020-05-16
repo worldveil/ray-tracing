@@ -41,7 +41,7 @@ On my machine, this takes about 3 minutes. Crazy you say? Well...
 
 For this reason, optimizing ray tracers is pretty important. Probably the next step for code like this (beyond actually allowing for triangles!) would be some time of quadtree-like intersection method, AKA a [Bounding Volume Hierarchy](https://en.wikipedia.org/wiki/Bounding_volume_hierarchy), which would cut down the number of intersections by some log factor. Still, this is a monumental task once we get to larger image sizes and number of objects.
 
-Note that the `make production` compilation uses `-O3`, and this makes the program run 8-10x faster (!).
+Note that compilation uses `-O3`, and this makes the program run 8-10x faster (!).
 
 ## Valgrind
 
@@ -54,14 +54,14 @@ brew install --HEAD https://raw.githubusercontent.com/LouisBrunner/valgrind-maco
 then run with:
 
 ```shell
-$ make development
+$ sh run_build.sh
 $ valgrind \
     --leak-check=full \
     --show-leak-kinds=all \
     --track-origins=yes \
     --progress-interval=5 \
     -- \
-    ./tracer -h 10 -w 20 -o test.ppm -s 10 -d 10 -o scene.ppm -e 0.01
+    ./build/tracer -h 10 -w 20 -o test.ppm -s 10 -d 10 -e 0.01
 ```
 
 It's worth noting that Valgrind actually serializes (orders) thread execution so they just execute one after the other. Valgrind in general is up to 50x slower as well, since it's monitoring every memory allocation. So this multithreaded ray tracer will be really, really slow in Valgrind. That's why I have the image so small in the example shell command.
