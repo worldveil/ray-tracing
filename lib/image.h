@@ -34,7 +34,7 @@ inline bool Image::writeToFile(std::string filepath) const {
     f << "P3\n" << width << " " << height << "\n255\n";
 
     // write pixels
-    for (int j = height; j >= 0; j--) {
+    for (int j = height - 1; j >= 0; j--) {
         for (int i = 0; i < width; i++) {
             const vec3& pixel = getPixel(i, j);
             f << pixel.r() << " " << pixel.g() << " " << pixel.b() << "\n";

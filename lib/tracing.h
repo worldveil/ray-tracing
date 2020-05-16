@@ -1,6 +1,7 @@
 #ifndef TRACINGH
 #define TRACINGH
 
+#include <limits>
 #include "vec3.h"
 #include "hittable.h"
 #include "ray.h"
@@ -23,18 +24,18 @@ namespace tracing {
 
     struct RayTracingConfig {
         unsigned int height, width, max_depth, num_samples;
-        camera* cam;
-        hittable* world;
+        std::unique_ptr<camera> cam;
+        std::unique_ptr<hittable> world;
         std::string savepath;
         float estimate;
     };
 
-    vec3 color(const ray& r, RayTracingConfig& config, unsigned int depth) {
+    vec3 color(const ray& r, const RayTracingConfig& config, unsigned int depth) {
         hit_record rec;
 
         // if it's a valid (positive) time (in front of camera), then display a gradient
         // based on the normal vector from the center of the circle to the intersection point
-        if (config.world->hit(r, 0.001, MAXFLOAT, rec)) {
+        if (config.world->hit(r, 0.001, std::numeric_limits<float>::max(), rec)) {
         ray scattered;
         vec3 attenuation;
 
@@ -60,7 +61,7 @@ namespace tracing {
     /**
      * Traces a single pixel
      **/
-    vec3 trace(int i, int j, RayTracingConfig& config) {
+    vec3 trace(int i, int j, const RayTracingConfig& config) {
         vec3 c(0, 0, 0);
 
         // decide our color with `config.num_samples` random rays
@@ -86,7 +87,7 @@ namespace tracing {
      * We use a lambda to set our Image object directly from threads. Each thread has a 
      * non-overlapping set of pixels to compute, so no thread coorination is necessary.
      **/
-    void tracePixelBatch(int start, int end, std::vector<TracedPixel>& jobs, RayTracingConfig& config, Image& img) {
+    void tracePixelBatch(int start, int end, const std::vector<TracedPixel>& jobs, const RayTracingConfig& config, Image& img) {
         std::for_each(
             jobs.begin() + start,
             jobs.begin() + end,

@@ -5,6 +5,7 @@
 #include <thread>
 #include <algorithm>
 #include <random>
+#include <memory>
 
 #include "args.hpp"
 #include "vec3.h"
@@ -108,8 +109,7 @@ int main(int argc, char** argv) {
     float distToFocusAt = (lookFrom - lookAt).length();
     float aperture = 0.;
     float fieldOfViewDegrees = 45;
-    camera cam(lookFrom, lookAt, up, fieldOfViewDegrees, aspect, aperture, distToFocusAt);
-    config.cam = &cam;
+    config.cam = std::make_unique<camera>(lookFrom, lookAt, up, fieldOfViewDegrees, aspect, aperture, distToFocusAt);
 
     // for status updates, have some stats about the image
     int totalPixels = config.width * config.height;
@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
 
     // create pixel tracing jobs
     std::vector<tracing::TracedPixel> jobs;
-    for (unsigned int j = config.height - 1; j >= 0; j--) {
+    for (int j = (int)config.height - 1; j >= 0; j--) {
         for (unsigned int i = 0; i < config.width; i++) {
             tracing::TracedPixel p(i, j);
             jobs.push_back(p);
@@ -179,9 +179,9 @@ int main(int argc, char** argv) {
     }
 
     // join threads
-    for (unsigned int i = 0; i < NUM_THREADS; ++i) {
-        threads[i]->join();
-        delete threads[i];
+    for (auto thread : threads) {
+        thread->join();
+        delete thread;
     }
 
     // report time back to user
@@ -191,20 +191,6 @@ int main(int argc, char** argv) {
     std::cout << "Per pixel render ms (" << totalPixels << "): " << perPixel << " ms" << std::endl;
 
     // then write to disk
-    std::ofstream f;
-    f.open(config.savepath);
-    f << "P3\n" << config.width << " " << config.height << "\n255\n"; // header for PPM file
-
-    // write pixels to disk in correct PPM format order
-    for (unsigned int j = config.height - 1; j >= 0; j--) {
-        for (unsigned int i = 0; i < config.width; i++) {
-            const vec3& pixel = img.getPixel(i, j);
-            f << pixel.r() << " " << pixel.g() << " " << pixel.b() << "\n";
-        }
-    }
-
-    delete config.world;
-
-    // close file
-    f.close();
+    if (!img.writeToFile(config.savepath))
+        std::cout << "Error writing file to " << config.savepath << "\n";
 }
